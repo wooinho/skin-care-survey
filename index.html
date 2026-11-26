@@ -45,6 +45,8 @@ th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;vertic
 th{font-weight:700;color:var(--mut);font-size:13px}
 .grid td.c,.grid th.c{text-align:center;width:52px}
 .grid input{width:20px;height:20px;accent-color:var(--wine)}
+input.etc{width:100%;margin-top:10px;font:inherit;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+input.etc[hidden]{display:none}
 textarea{width:100%;min-height:96px;font:inherit;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 .nav{display:flex;gap:10px;margin-top:20px}
 .btn{min-height:48px;padding:0 22px;border-radius:24px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
@@ -137,6 +139,7 @@ const Q=[
 {id:'B9',sec:'파트 2 · 새로운 제품',t:'bw',q:'아래 문구 중 제품을 가장 사고 싶게 만드는 것과 가장 덜 끌리는 것을 하나씩 골라 주세요.',s:'메시지 Best/Worst',w:'전체',ob:'O2'},
 {id:'C1',sec:'파트 3 · 가격과 구독',t:'scale',l:PI,q:()=>'이 제품의 가격입니다. 이 가격이라면 사고 싶은가요?',price:true,s:'가격 제시 후 구매의향',w:'전체',ob:'O1'},
 {id:'C2',sec:'파트 3 · 가격과 구독',t:'single',q:'디바이스와 기본 패치 구성이라면 적정하다고 생각하는 가격은 얼마인가요?',o:['30만 원 미만','30만~50만 원','50만~70만 원','70만~90만 원','90만 원 이상'],s:'적정 가격대',w:'전체',ob:'O1'},
+{id:'C2B',sec:'파트 3 · 가격과 구독',t:'single',q:'교체용 패치를 매달 정기배송 받는다면, 적정하다고 생각하는 월 구독료는 얼마인가요?',o:['5만 원 미만','5만~10만 원','10만~15만 원','15만~20만 원','20만 원 이상'],s:'적정 월 구독료',w:'전체',ob:'O1'},
 {id:'C3',sec:'파트 3 · 가격과 구독',t:'scale',l:['전혀 없다','없다','보통이다','있다','매우 있다'],q:'교체용 패치를 매달 14만 9천 원에 정기배송 받는 서비스를 이용할 생각이 있나요?',s:'패치 구독 의향',w:'전체',ob:'O1'},
 {id:'C4',sec:'파트 3 · 가격과 구독',t:'single',q:'정기배송을 받는다면 어떤 주기가 가장 좋을까요?',o:['3주마다','4주(한 달)마다','6주마다','정기배송보다 필요할 때 따로 사겠다'],when:()=>st.a.C3>=2,s:'선호 배송 주기',w:'C3 보통 이상',ob:'O1'},
 {id:'C5',sec:'파트 3 · 가격과 구독',t:'multi',max:2,q:'이 제품을 사기 전에 가장 확인하고 싶은 것은 무엇인가요?',hint:'최대 2개',o:['임상·시험 자료','피부과 전문의 의견','나와 비슷한 사람의 사용 후기','체험 후 환불 보장','할인·사은품','매장에서 직접 체험'],s:'구매 전 확인 정보',w:'전체',ob:'O1'},
@@ -151,11 +154,14 @@ const IMG={home:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgH
 const art=k=>IMG[k]?`<img src="${IMG[k]}" alt="착용 이미지" style="width:100%;height:100%;object-fit:cover;display:block;min-height:170px">`:k==='home'
 ?`<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="320" height="180" fill="#f6dfe6"/><rect x="190" y="22" width="92" height="74" rx="6" fill="#3a2440"/><circle cx="252" cy="48" r="12" fill="#fbeef1"/><rect x="20" y="112" width="230" height="44" rx="18" fill="#7a1f3d"/><rect x="30" y="92" width="80" height="36" rx="14" fill="#9b3456"/><rect x="0" y="156" width="320" height="24" fill="#e7c6d1"/><g transform="translate(150 70)"><rect width="46" height="22" rx="11" fill="#fff" stroke="#7a1f3d" stroke-width="2"/><circle cx="36" cy="11" r="4" fill="#ff6a3d"/></g><text x="16" y="28" font-size="13" fill="#7a1f3d">착용 이미지 자리</text></svg>`
 :`<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd2bf"/><stop offset="1" stop-color="#fff1ea"/></linearGradient></defs><rect width="320" height="180" fill="url(#sk)"/><circle cx="250" cy="52" r="22" fill="#ff6a3d"/><g fill="#c97b93">${[0,1,2,3,4,5,6].map(i=>`<rect x="${12+i*44}" y="${86-((i*37)%40)}" width="34" height="${80+((i*37)%40)}"/>`).join('')}</g><rect x="0" y="0" width="320" height="180" fill="none" stroke="#7a1f3d" stroke-width="18"/><rect x="0" y="150" width="320" height="30" fill="#7a1f3d"/><g transform="translate(150 70)"><rect width="46" height="22" rx="11" fill="#fff" stroke="#7a1f3d" stroke-width="2"/><circle cx="36" cy="11" r="4" fill="#ff6a3d"/></g><text x="16" y="30" font-size="13" fill="#fff">착용 이미지 자리</text></svg>`;
+const etcI=q=>q.o?q.o.findIndex(x=>x.startsWith('기타')):-1;
+const etcOn=q=>{const i=etcI(q),a=st.a[q.id];return i>=0&&(q.t==='single'?a===i:Array.isArray(a)&&a.includes(i))};
+const etcBox=q=>etcI(q)<0?'':`<input type="text" class="etc" id="etc_${q.id}" data-etc="${q.id}" maxlength="100" placeholder="'기타'를 고르셨다면 내용을 적어 주세요" aria-label="기타 내용" value="${(st.a[q.id+'_etc']||'').replace(/"/g,'&quot;')}" ${etcOn(q)?'':'hidden'}>`;
 const radios=(q,l,name,cur)=>`<div class="scale">${l.map((x,i)=>`<label><input type="radio" name="${name}" value="${i}" data-q="${q.id}" ${cur===i?'checked':''}>${x}</label>`).join('')}</div>`;
 function body(q){
  const a=st.a[q.id];
- if(q.t==='single')return `<div class="opts">${q.o.map((x,i)=>`<label class="opt"><input type="radio" name="${q.id}" value="${i}" data-q="${q.id}" ${a===i?'checked':''}>${x}</label>`).join('')}</div>`;
- if(q.t==='multi')return `<div class="opts">${q.o.map((x,i)=>`<label class="opt"><input type="checkbox" value="${i}" data-q="${q.id}" ${Array.isArray(a)&&a.includes(i)?'checked':''}>${x}</label>`).join('')}</div>`;
+ if(q.t==='single')return `<div class="opts">${q.o.map((x,i)=>`<label class="opt"><input type="radio" name="${q.id}" value="${i}" data-q="${q.id}" ${a===i?'checked':''}>${x}</label>`).join('')}</div>${etcBox(q)}`;
+ if(q.t==='multi')return `<div class="opts">${q.o.map((x,i)=>`<label class="opt"><input type="checkbox" value="${i}" data-q="${q.id}" ${Array.isArray(a)&&a.includes(i)?'checked':''}>${x}</label>`).join('')}</div>${etcBox(q)}`;
  if(q.t==='scale')return (q.price?priceBox():'')+radios(q,q.l,q.id,a);
  if(q.t==='text')return `<textarea id="ta_${q.id}" data-q="${q.id}" maxlength="200" placeholder="예: 출근길에 쓸 수 있다는 점이 끌렸어요">${a||''}</textarea>`;
  if(q.t==='info')return '';
@@ -184,8 +190,8 @@ function render(){
 function valid(q){
  const a=st.a[q.id];
  if(q.t==='info'||q.t==='text')return '';
- if(q.t==='single'||q.t==='scale')return a===undefined?'하나를 골라 주세요.':'';
- if(q.t==='multi')return !a||!a.length?'하나 이상 골라 주세요.':'';
+ if(q.t==='single'||q.t==='scale')return a===undefined?'하나를 골라 주세요.':etcOn(q)&&!(st.a[q.id+'_etc']||'').trim()?"'기타' 내용을 적어 주세요.":'';
+ if(q.t==='multi')return !a||!a.length?'하나 이상 골라 주세요.':etcOn(q)&&!(st.a[q.id+'_etc']||'').trim()?"'기타' 내용을 적어 주세요.":'';
  if(q.t==='concept')return !a||Object.keys(a).length<CG.length?'네 문장 모두 응답해 주세요.':'';
  if(q.t==='bw')return !a||a.b===undefined||a.w===undefined?'두 가지 모두 골라 주세요.':a.b===a.w?'같은 문구를 두 번 고를 수 없어요.':'';
 }
@@ -209,8 +215,9 @@ $('box').addEventListener('change',e=>{
   st.a[id]=sel;
  }else if(q.t==='concept'||q.t==='bw'){st.a[id]=Object.assign({},st.a[id],{[el.dataset.r]:v});$('msg').textContent=''}
  else if(q.t!=='text'){st.a[id]=v;$('msg').textContent=''}
+ const t=$('etc_'+id);if(t){const on=etcOn(q);if(on&&t.hidden){t.hidden=false;t.focus()}else if(!on)t.hidden=true}
 });
-$('box').addEventListener('input',e=>{const el=e.target;if(el.tagName==='TEXTAREA')st.a[el.dataset.q]=el.value});
+$('box').addEventListener('input',e=>{const el=e.target;if(el.tagName==='TEXTAREA')st.a[el.dataset.q]=el.value;else if(el.dataset.etc){st.a[el.dataset.etc+'_etc']=el.value;$('msg').textContent=''}});
 $('box').addEventListener('click',e=>{
  const id=e.target.id;
  if(id==='next')next();else if(id==='back')back();else if(id==='reset')reset();
@@ -221,6 +228,7 @@ function flat(seg){
  for(const q of Q){const v=st.a[q.id];if(v===undefined||q.t==='info')continue;
   if(q.t==='single')r[q.id]=q.o[v];
   else if(q.t==='multi')r[q.id]=v.map(i=>q.o[i]).join('; ');
+  if(etcOn(q))r[q.id+'_기타']=(st.a[q.id+'_etc']||'').trim();
   else if(q.t==='scale')r[q.id]=v+1;
   else if(q.t==='text')r[q.id]=v;
   else if(q.t==='concept'){const c=CON[st.cell.ord[q.pos]].k==='home'?'홈':'Whereable';r[q.id+'_소개']=c;CG.forEach((g,ri)=>{if(v[ri]!==undefined)r[q.id+'_'+g]=v[ri]+1})}
